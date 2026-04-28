@@ -23,6 +23,12 @@ target
 .scripts
 .direnv/
 
+# Local model runtime artifacts
+local/env.local
+models/
+*.gguf
+*.safetensors
+
 # Local dev files
 opencode-dev
 UPCOMING_CHANGELOG.md

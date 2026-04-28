@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "opencode local model profiles. This config is intentionally separate from upstream opencode source so frequent upstream updates do not collide with local model work.",
+  "profiles": {
+    "gemma-4-e4b": {
+      "name": "Gemma 4 E4B IT",
+      "hfModel": "google/gemma-4-E4B-it",
+      "opencodeModel": "gemma-4-e4b",
+      "recommendedBackend": "openai-compatible",
+      "notes": "Expose a slash-free alias such as gemma-4-e4b from your local server."
+    },
+    "gemma-4-e2b": {
+      "name": "Gemma 4 E2B IT",
+      "hfModel": "google/gemma-4-E2B-it",
+      "opencodeModel": "gemma-4-e2b",
+      "recommendedBackend": "openai-compatible",
+      "notes": "Expose a slash-free alias such as gemma-4-e2b from your local server."
+    },
+    "qwen-coder-7b": {
+      "name": "Qwen2.5 Coder 7B Instruct",
+      "hfModel": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "ollamaModel": "qwen2.5-coder:7b",
+      "opencodeModel": "qwen-coder-7b",
+      "recommendedBackend": "ollama",
+      "notes": "Recommended local coding default."
+    },
+    "qwen-coder-3b": {
+      "name": "Qwen2.5 Coder 3B Instruct",
+      "hfModel": "Qwen/Qwen2.5-Coder-3B-Instruct",
+      "ollamaModel": "qwen2.5-coder:3b",
+      "opencodeModel": "qwen-coder-3b",
+      "recommendedBackend": "ollama",
+      "notes": "Good laptop profile when 7B is too heavy."
+    },
+    "qwen-coder-1.5b": {
+      "name": "Qwen2.5 Coder 1.5B Instruct",
+      "hfModel": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+      "ollamaModel": "qwen2.5-coder:1.5b",
+      "opencodeModel": "qwen-coder-1.5b",
+      "recommendedBackend": "ollama",
+      "notes": "Very small smoke-test profile."
+    }
+  },
+  "backendDefaults": {
+    "ollama": {
+      "baseURL": "http://127.0.0.1:11434/v1",
+      "modelField": "ollamaModel"
+    },
+    "llamacpp": {
+      "baseURL": "http://127.0.0.1:8080/v1",
+      "modelField": "opencodeModel",
+      "note": "Start llama-server with --alias matching the selected profile, or set LOCAL_MODEL_ID."
+    },
+    "vllm": {
+      "baseURL": "http://127.0.0.1:8000/v1",
+      "modelField": "opencodeModel",
+      "note": "Start vLLM with --served-model-name matching the selected profile, or set LOCAL_MODEL_ID."
+    },
+    "lmstudio": {
+      "baseURL": "http://127.0.0.1:1234/v1",
+      "modelField": "opencodeModel"
+    },
+    "openai-compatible": {
+      "baseURL": "http://127.0.0.1:8000/v1",
+      "modelField": "opencodeModel"
+    }
+  }
+}
