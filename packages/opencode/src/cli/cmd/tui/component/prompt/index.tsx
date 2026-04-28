@@ -136,6 +136,7 @@ export function Prompt(props: PromptProps) {
     return Locale.truncateMiddle(file, Math.max(12, Math.min(48, Math.floor(dimensions().width / 3))))
   })
   const [auto, setAuto] = createSignal<AutocompleteRef>()
+  const [autoaccept, setAutoaccept] = kv.signal<"none" | "edit">("permission_auto_accept", "edit")
   const currentProviderLabel = createMemo(() => local.model.parsed().provider)
   const hasRightContent = createMemo(() => Boolean(props.right))
 
@@ -254,6 +255,17 @@ export function Prompt(props: PromptProps) {
 
   command.register(() => {
     return [
+      {
+        title: autoaccept() === "none" ? "Enable autoedit" : "Disable autoedit",
+        value: "permission.auto_accept.toggle",
+        search: "toggle permissions",
+        keybind: "permission_auto_accept_toggle",
+        category: "Agent",
+        onSelect: (dialog) => {
+          setAutoaccept(() => (autoaccept() === "none" ? "edit" : "none"))
+          dialog.clear()
+        },
+      },
       {
         title: "Clear prompt",
         value: "prompt.clear",
@@ -1280,8 +1292,13 @@ export function Prompt(props: PromptProps) {
                   )}
                 </Show>
               </box>
-              <Show when={hasRightContent()}>
+              <Show when={autoaccept() === "edit" || hasRightContent()}>
                 <box flexDirection="row" gap={1} alignItems="center">
+                  <Show when={autoaccept() === "edit"}>
+                    <text>
+                      <span style={{ fg: theme.warning }}>autoedit</span>
+                    </text>
+                  </Show>
                   {props.right}
                 </box>
               </Show>
