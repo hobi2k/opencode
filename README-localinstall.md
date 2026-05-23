@@ -156,14 +156,14 @@ bun dev ~/Desktop/my-project
 zsh 기준:
 
 ```bash
-echo 'alias opencode-src="cd /Users/hsahn/Desktop/opencode && bun dev"' >> ~/.zshrc
+echo 'alias opencode="cd /Users/hsahn/Desktop/opencode && bun dev"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
 이후:
 
 ```bash
-opencode-src /path/to/your/project
+opencode /path/to/your/project
 ```
 
 주의: 이 alias는 현재 shell을 opencode repo로 이동시킨 뒤 실행합니다. 단순하고 투명한 방식입니다.
@@ -206,7 +206,7 @@ mkdir -p ~/.local/bin
 심볼릭 링크를 만듭니다.
 
 ```bash
-ln -sf /Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode ~/.local/bin/opencode-local
+ln -sf /Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode ~/.local/bin/opencode
 ```
 
 `~/.local/bin`이 PATH에 없다면:
@@ -219,13 +219,13 @@ source ~/.zshrc
 확인:
 
 ```bash
-opencode-local --help
+opencode --help
 ```
 
 이제 어디서든:
 
 ```bash
-opencode-local /path/to/your/project
+opencode /path/to/your/project
 ```
 
 ## 8. 로컬 LLM과 함께 CLI 실행

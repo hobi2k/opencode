@@ -24,6 +24,49 @@
 - `scripts/mlx-openai-alias-proxy.py`: `mlx_lm.server`의 slash 포함 모델 id를 opencode용 slash-free alias로 바꿔주는 작은 프록시입니다.
 - `scripts/opencode-local.ps1`: Windows PowerShell에서 쓰는 opencode 로컬 실행 CLI입니다.
 
+## 설정 방식 선택
+
+둘 중 하나만 고르면 됩니다. 환경변수 방식과 config 파일 방식을 동시에 쓸 필요는 없습니다.
+
+| 상황 | 추천 방식 | 실행 예 |
+| --- | --- | --- |
+| 모델이나 backend를 자주 바꿈 | `local/env.local` + `scripts/opencode-local` | `/Users/hsahn/Desktop/opencode/scripts/opencode-local .` |
+| 모델 하나로 고정해서 씀 | `OPENCODE_CONFIG` + 고정 config 파일 | `OPENCODE_CONFIG=/path/to/opencode.local.jsonc opencode .` |
+
+자주 모델을 바꾸는 경우에는 `local/env.local`에 기본값을 적어두고 `scripts/opencode-local`을 실행하는 편이 편합니다. 예를 들어 LM Studio를 기본으로 쓴다면 `local/env.local`에 이렇게 둡니다.
+
+```bash
+LOCAL_BACKEND=lmstudio
+LOCAL_MODEL_ID=qwen-coder-7b
+```
+
+그 다음부터는 원하는 프로젝트 폴더에서 아래처럼 실행하면 됩니다.
+
+```bash
+/Users/hsahn/Desktop/opencode/scripts/opencode-local .
+```
+
+모델 하나로 고정해서 쓸 경우에는 `configs/opencode.local.jsonc` 같은 파일에 provider와 model을 직접 적고, 실행할 때 그 파일을 지정합니다.
+
+```bash
+OPENCODE_CONFIG=/Users/hsahn/Desktop/opencode/configs/opencode.local.jsonc opencode .
+```
+
+이때 `opencode.local.jsonc` 안의 `baseURL`과 `model`은 실제 서버와 맞아야 합니다. LM Studio는 보통 `http://127.0.0.1:1234/v1`을 씁니다.
+
+## 빌드와 설정 변경
+
+설정만 바꾸는 경우에는 다시 빌드하지 않습니다.
+
+| 바꾼 것 | 다시 빌드 필요 여부 |
+| --- | --- |
+| `local/env.local`, `LOCAL_BACKEND`, `LOCAL_MODEL_ID` | 필요 없음 |
+| `configs/opencode.local.jsonc` 같은 config 파일 | 필요 없음 |
+| `scripts/opencode-local`, `scripts/opencode-mlx` | 필요 없음 |
+| `packages/opencode/src/...` TypeScript 본체 코드 | standalone binary를 쓰면 다시 빌드 필요 |
+
+`bun dev`로 source CLI를 실행하는 경우에는 TypeScript 본체 수정도 실행 때 바로 반영됩니다. 반대로 직접 빌드한 standalone binary를 PATH에 연결해서 쓰는 경우에는 본체 소스 코드를 바꿨을 때만 다시 빌드합니다. env나 JSON 설정만 바꿨다면 빌드할 필요가 없습니다.
+
 ## 처음부터 실행하는 추천 절차
 
 MacBook Apple Silicon에서 LM Studio/Ollama 없이 자립형으로 시작하려면 이 순서가 가장 단순합니다.
