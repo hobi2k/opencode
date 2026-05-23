@@ -56,6 +56,21 @@
       "modelField": "opencodeModel",
       "note": "Start vLLM with --served-model-name matching the selected profile, or set LOCAL_MODEL_ID."
     },
+    "mlx-lm": {
+      "baseURL": "http://127.0.0.1:8080/v1",
+      "modelField": "opencodeModel",
+      "note": "Start mlx_lm.server with an MLX model. If the server exposes the Hugging Face repo id, set LOCAL_MODEL_ID to that exact id."
+    },
+    "vmlx": {
+      "baseURL": "http://127.0.0.1:8000/v1",
+      "modelField": "opencodeModel",
+      "note": "Start vMLX with an OpenAI-compatible endpoint and set LOCAL_MODEL_ID to the model id shown by /v1/models if needed."
+    },
+    "vllm-metal": {
+      "baseURL": "http://127.0.0.1:8000/v1",
+      "modelField": "opencodeModel",
+      "note": "Start vLLM with the vllm-metal backend. On macOS this is experimental; set LOCAL_MODEL_ID to the served model name if needed."
+    },
     "lmstudio": {
       "baseURL": "http://127.0.0.1:1234/v1",
       "modelField": "opencodeModel"

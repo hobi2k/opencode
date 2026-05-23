@@ -67,6 +67,18 @@ opencode_local_resolve_backend() {
       LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:8000/v1}
       LOCAL_RESOLVED_MODEL=${LOCAL_MODEL_ID:-$LOCAL_PROFILE_ALIAS}
       ;;
+    mlx-lm | mlxlm)
+      LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:8080/v1}
+      LOCAL_RESOLVED_MODEL=${LOCAL_MODEL_ID:-$LOCAL_PROFILE_ALIAS}
+      ;;
+    vmlx)
+      LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:8000/v1}
+      LOCAL_RESOLVED_MODEL=${LOCAL_MODEL_ID:-$LOCAL_PROFILE_ALIAS}
+      ;;
+    vllm-metal | vllmmetal)
+      LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:8000/v1}
+      LOCAL_RESOLVED_MODEL=${LOCAL_MODEL_ID:-$LOCAL_PROFILE_ALIAS}
+      ;;
     lmstudio)
       LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:1234/v1}
       LOCAL_RESOLVED_MODEL=${LOCAL_MODEL_ID:-$LOCAL_PROFILE_ALIAS}
@@ -77,7 +89,7 @@ opencode_local_resolve_backend() {
       ;;
     *)
       printf 'Unknown LOCAL_BACKEND: %s\n' "$backend" >&2
-      printf 'Supported: ollama, llamacpp, vllm, lmstudio, openai-compatible\n' >&2
+      printf 'Supported: ollama, llamacpp, vllm, mlx-lm, vmlx, vllm-metal, lmstudio, openai-compatible\n' >&2
       exit 2
       ;;
   esac

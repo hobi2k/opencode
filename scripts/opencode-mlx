@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+set -eu
+
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+
+: "${LOCAL_BACKEND:=mlx-lm}"
+: "${LOCAL_MODEL_PROFILE:=qwen-coder-7b}"
+
+export LOCAL_BACKEND
+export LOCAL_MODEL_PROFILE
+
+exec "$ROOT/scripts/opencode-local" "$@"

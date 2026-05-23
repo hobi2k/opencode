@@ -50,6 +50,18 @@ switch ($Backend) {
     if (-not $BaseUrl) { $BaseUrl = "http://127.0.0.1:8000/v1" }
     if (-not $Model) { $Model = $ProfileData.Alias }
   }
+  { $_ -in @("mlx-lm", "mlxlm") } {
+    if (-not $BaseUrl) { $BaseUrl = "http://127.0.0.1:8080/v1" }
+    if (-not $Model) { $Model = $ProfileData.Alias }
+  }
+  "vmlx" {
+    if (-not $BaseUrl) { $BaseUrl = "http://127.0.0.1:8000/v1" }
+    if (-not $Model) { $Model = $ProfileData.Alias }
+  }
+  { $_ -in @("vllm-metal", "vllmmetal") } {
+    if (-not $BaseUrl) { $BaseUrl = "http://127.0.0.1:8000/v1" }
+    if (-not $Model) { $Model = $ProfileData.Alias }
+  }
   "lmstudio" {
     if (-not $BaseUrl) { $BaseUrl = "http://127.0.0.1:1234/v1" }
     if (-not $Model) { $Model = $ProfileData.Alias }
