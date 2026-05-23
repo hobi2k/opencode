@@ -49,10 +49,31 @@ Bun이 없다면 설치:
 curl -fsSL https://bun.sh/install | bash
 ```
 
-새 터미널을 열거나 shell 설정을 다시 불러온 뒤 확인합니다.
+설치가 끝난 뒤 새 터미널을 열거나 shell 설정을 다시 불러옵니다.
+
+```bash
+source ~/.zshrc
+```
+
+확인합니다.
 
 ```bash
 bun --version
+```
+
+만약 여전히 `zsh: command not found: bun`이 나오면 현재 터미널에 PATH를 직접 넣어 확인합니다.
+
+```bash
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+bun --version
+```
+
+이 명령으로는 동작하는데 새 터미널에서 다시 안 잡히면 `~/.zshrc`에 아래 줄이 있는지 확인합니다.
+
+```bash
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
 ```
 
 ## 2. Git clone
@@ -384,10 +405,40 @@ bun install
 
 ### `bun: command not found`
 
-Bun 설치 후 새 터미널을 열거나 shell 설정을 다시 로드합니다.
+Bun이 설치되어 있지 않거나 PATH에 안 잡힌 상태입니다.
+
+먼저 설치합니다.
+
+```bash
+curl -fsSL https://bun.sh/install | bash
+```
+
+설치 후 새 터미널을 열거나 shell 설정을 다시 로드합니다.
 
 ```bash
 source ~/.zshrc
+```
+
+확인:
+
+```bash
+bun --version
+```
+
+그래도 안 되면 현재 터미널에 PATH를 직접 추가합니다.
+
+```bash
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+bun --version
+```
+
+그 다음 다시 실행합니다.
+
+```bash
+cd /Users/hsahn/Desktop/opencode
+bun install
+bun dev
 ```
 
 ### `bun install`이 실패함
