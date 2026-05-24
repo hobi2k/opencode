@@ -10,40 +10,12 @@ opencode_local_load_env() {
   fi
 }
 
-opencode_local_profile() {
-  profile=${LOCAL_MODEL_PROFILE:-qwen-coder-7b}
-  case "$profile" in
-    gemma-4-e4b)
-      LOCAL_PROFILE_NAME="Gemma 4 E4B IT"
-      LOCAL_PROFILE_ALIAS="gemma-4-e4b"
-      LOCAL_PROFILE_OLLAMA_MODEL=""
-      ;;
-    gemma-4-e2b)
-      LOCAL_PROFILE_NAME="Gemma 4 E2B IT"
-      LOCAL_PROFILE_ALIAS="gemma-4-e2b"
-      LOCAL_PROFILE_OLLAMA_MODEL=""
-      ;;
-    qwen-coder-7b)
-      LOCAL_PROFILE_NAME="Qwen2.5 Coder 7B Instruct"
-      LOCAL_PROFILE_ALIAS="qwen-coder-7b"
-      LOCAL_PROFILE_OLLAMA_MODEL="qwen2.5-coder:7b"
-      ;;
-    qwen-coder-3b)
-      LOCAL_PROFILE_NAME="Qwen2.5 Coder 3B Instruct"
-      LOCAL_PROFILE_ALIAS="qwen-coder-3b"
-      LOCAL_PROFILE_OLLAMA_MODEL="qwen2.5-coder:3b"
-      ;;
-    qwen-coder-1.5b)
-      LOCAL_PROFILE_NAME="Qwen2.5 Coder 1.5B Instruct"
-      LOCAL_PROFILE_ALIAS="qwen-coder-1.5b"
-      LOCAL_PROFILE_OLLAMA_MODEL="qwen2.5-coder:1.5b"
-      ;;
-    *)
-      printf 'Unknown LOCAL_MODEL_PROFILE: %s\n' "$profile" >&2
-      printf 'Supported: gemma-4-e4b, gemma-4-e2b, qwen-coder-7b, qwen-coder-3b, qwen-coder-1.5b\n' >&2
-      exit 2
-      ;;
-  esac
+opencode_local_model() {
+  if [ -z "${LOCAL_MODEL_ID:-}" ]; then
+    printf 'LOCAL_MODEL_ID is required. Set it to the model id shown by your local server.\n' >&2
+    exit 2
+  fi
+  LOCAL_RESOLVED_MODEL_NAME=${LOCAL_MODEL_NAME:-$LOCAL_MODEL_ID}
 }
 
 opencode_local_resolve_backend() {
@@ -51,41 +23,35 @@ opencode_local_resolve_backend() {
   case "$backend" in
     ollama)
       LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:11434/v1}
-      if [ -n "${LOCAL_MODEL_ID:-}" ]; then
-        LOCAL_RESOLVED_MODEL=$LOCAL_MODEL_ID
-      elif [ -n "$LOCAL_PROFILE_OLLAMA_MODEL" ]; then
-        LOCAL_RESOLVED_MODEL=$LOCAL_PROFILE_OLLAMA_MODEL
-      else
-        LOCAL_RESOLVED_MODEL=$LOCAL_PROFILE_ALIAS
-      fi
+      LOCAL_RESOLVED_MODEL=$LOCAL_MODEL_ID
       ;;
     llamacpp)
       LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:8080/v1}
-      LOCAL_RESOLVED_MODEL=${LOCAL_MODEL_ID:-$LOCAL_PROFILE_ALIAS}
+      LOCAL_RESOLVED_MODEL=$LOCAL_MODEL_ID
       ;;
     vllm)
       LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:8000/v1}
-      LOCAL_RESOLVED_MODEL=${LOCAL_MODEL_ID:-$LOCAL_PROFILE_ALIAS}
+      LOCAL_RESOLVED_MODEL=$LOCAL_MODEL_ID
       ;;
     mlx-lm | mlxlm)
       LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:8080/v1}
-      LOCAL_RESOLVED_MODEL=${LOCAL_MODEL_ID:-$LOCAL_PROFILE_ALIAS}
+      LOCAL_RESOLVED_MODEL=$LOCAL_MODEL_ID
       ;;
     vmlx)
       LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:8000/v1}
-      LOCAL_RESOLVED_MODEL=${LOCAL_MODEL_ID:-$LOCAL_PROFILE_ALIAS}
+      LOCAL_RESOLVED_MODEL=$LOCAL_MODEL_ID
       ;;
     vllm-metal | vllmmetal)
       LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:8000/v1}
-      LOCAL_RESOLVED_MODEL=${LOCAL_MODEL_ID:-$LOCAL_PROFILE_ALIAS}
+      LOCAL_RESOLVED_MODEL=$LOCAL_MODEL_ID
       ;;
     lmstudio)
       LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:1234/v1}
-      LOCAL_RESOLVED_MODEL=${LOCAL_MODEL_ID:-$LOCAL_PROFILE_ALIAS}
+      LOCAL_RESOLVED_MODEL=$LOCAL_MODEL_ID
       ;;
     openai-compatible)
       LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:8000/v1}
-      LOCAL_RESOLVED_MODEL=${LOCAL_MODEL_ID:-$LOCAL_PROFILE_ALIAS}
+      LOCAL_RESOLVED_MODEL=$LOCAL_MODEL_ID
       ;;
     *)
       printf 'Unknown LOCAL_BACKEND: %s\n' "$backend" >&2
@@ -102,8 +68,8 @@ opencode_local_json_escape() {
 }
 
 opencode_local_print() {
-  printf 'profile=%s\n' "${LOCAL_MODEL_PROFILE:-qwen-coder-7b}"
-  printf 'name=%s\n' "$LOCAL_PROFILE_NAME"
+  printf 'model_id=%s\n' "$LOCAL_MODEL_ID"
+  printf 'name=%s\n' "$LOCAL_RESOLVED_MODEL_NAME"
   printf 'backend=%s\n' "$LOCAL_RESOLVED_BACKEND"
   printf 'base_url=%s\n' "$LOCAL_RESOLVED_BASE_URL"
   printf 'model=%s\n' "$LOCAL_RESOLVED_MODEL"

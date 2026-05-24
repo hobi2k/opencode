@@ -6,7 +6,7 @@ ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 . "$ROOT/scripts/opencode-local-common.sh"
 
 opencode_local_load_env "$ROOT"
-opencode_local_profile
+opencode_local_model
 opencode_local_resolve_backend
 
 PROVIDER_ID=${LOCAL_OPENCODE_PROVIDER_ID:-local}
@@ -14,7 +14,7 @@ PROVIDER_ID_JSON=$(opencode_local_json_escape "$PROVIDER_ID")
 BASE_URL_JSON=$(opencode_local_json_escape "$LOCAL_RESOLVED_BASE_URL")
 API_KEY_JSON=$(opencode_local_json_escape "$LOCAL_RESOLVED_API_KEY")
 MODEL_JSON=$(opencode_local_json_escape "$LOCAL_RESOLVED_MODEL")
-NAME_JSON=$(opencode_local_json_escape "$LOCAL_PROFILE_NAME")
+NAME_JSON=$(opencode_local_json_escape "$LOCAL_RESOLVED_MODEL_NAME")
 
 OPENCODE_CONFIG_CONTENT=$(cat <<EOF
 {
