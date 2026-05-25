@@ -28,7 +28,7 @@ bun --version
 이미 clone되어 있으면 여기서 시작합니다.
 
 ```bash
-cd /Users/hsahn/Desktop/opencode
+cd ~/Desktop/opencode
 bun install
 ```
 
@@ -37,7 +37,7 @@ bun install
 직접 빌드한 실행 파일을 만듭니다.
 
 ```bash
-cd /Users/hsahn/Desktop/opencode
+cd ~/Desktop/opencode
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 bun ./packages/opencode/script/build.ts --single
@@ -46,14 +46,14 @@ bun ./packages/opencode/script/build.ts --single
 Apple Silicon Mac에서는 보통 여기에 생깁니다.
 
 ```text
-/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+~/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
 ```
 
 처음 한 번만 PATH에 연결합니다.
 
 ```bash
 mkdir -p ~/.local/bin
-ln -sf /Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode ~/.local/bin/opencode
+ln -sf ~/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode ~/.local/bin/opencode
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
@@ -85,7 +85,7 @@ opencode /path/to/project
 
 ### 방식 A: local/env.local
 
-`/Users/hsahn/Desktop/opencode/local/env.local`에 값을 넣습니다.
+`~/Desktop/opencode/local/env.local`에 값을 넣습니다.
 
 ```env
 LOCAL_BACKEND=lmstudio
@@ -94,13 +94,13 @@ LOCAL_MODEL_ID=서버에_보이는_모델_ID
 LOCAL_MODEL_NAME=서버에_보이는_모델_ID
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 처음 한 번만 alias를 등록합니다.
 
 ```bash
-echo "alias opencode='/Users/hsahn/Desktop/opencode/scripts/opencode-local'" >> ~/.zshrc
+echo 'alias opencode="$HOME/Desktop/opencode/scripts/opencode-local"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
@@ -120,7 +120,7 @@ opencode --print
 
 ### 방식 B: configs/opencode.local.jsonc
 
-`/Users/hsahn/Desktop/opencode/configs/opencode.local.jsonc`에서 아래 값을 직접 맞춥니다.
+`~/Desktop/opencode/configs/opencode.local.jsonc`에서 아래 값을 직접 맞춥니다.
 
 ```text
 baseURL
@@ -131,7 +131,7 @@ model
 처음 한 번만 환경변수를 등록합니다.
 
 ```bash
-echo 'export OPENCODE_CONFIG=/Users/hsahn/Desktop/opencode/configs/opencode.local.jsonc' >> ~/.zshrc
+echo 'export OPENCODE_CONFIG="$HOME/Desktop/opencode/configs/opencode.local.jsonc"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
@@ -151,7 +151,7 @@ unalias opencode
 
 ## 4. 서버별 설정
 
-자세한 설명은 [README-local.md](/Users/hsahn/Desktop/opencode/README-local.md)에 있습니다.
+자세한 설명은 [README-local.md](~/Desktop/opencode/README-local.md)에 있습니다.
 
 ### LM Studio
 
@@ -166,7 +166,7 @@ LOCAL_MODEL_ID=LM_STUDIO_모델_ID
 LOCAL_MODEL_NAME=LM_STUDIO_모델_ID
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 터미널:
@@ -189,7 +189,7 @@ LOCAL_MODEL_ID=모델이름
 LOCAL_MODEL_NAME=모델이름
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 터미널:
@@ -217,7 +217,7 @@ LOCAL_MODEL_ID=my-model
 LOCAL_MODEL_NAME=my-model
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 터미널:
@@ -253,10 +253,10 @@ LOCAL_MODEL_ID=서버에_보이는_모델_ID
 LOCAL_MODEL_NAME=서버에_보이는_모델_ID
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
-모델 ID에 `/`가 있으면 [README-local.md](/Users/hsahn/Desktop/opencode/README-local.md)의 alias proxy 절차를 씁니다.
+모델 ID에 `/`가 있으면 [README-local.md](~/Desktop/opencode/README-local.md)의 alias proxy 절차를 씁니다.
 
 터미널:
 
@@ -279,7 +279,7 @@ LOCAL_MODEL_ID=서버에_보이는_모델_ID
 LOCAL_MODEL_NAME=서버에_보이는_모델_ID
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 터미널:
@@ -307,7 +307,7 @@ LOCAL_MODEL_ID=my-model
 LOCAL_MODEL_NAME=my-model
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 터미널:
@@ -331,7 +331,7 @@ LOCAL_MODEL_ID=서버에_보이는_모델_ID
 LOCAL_MODEL_NAME=서버에_보이는_모델_ID
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 터미널:
@@ -358,7 +358,7 @@ LOCAL_MODEL_ID=서버에_보이는_모델_ID
 LOCAL_MODEL_NAME=서버에_보이는_모델_ID
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 터미널:
@@ -372,14 +372,14 @@ opencode
 개발 모드:
 
 ```bash
-cd /Users/hsahn/Desktop/opencode
+cd ~/Desktop/opencode
 bun dev:desktop
 ```
 
 패키징:
 
 ```bash
-cd /Users/hsahn/Desktop/opencode
+cd ~/Desktop/opencode
 bun run --cwd packages/desktop build
 bun run --cwd packages/desktop package:mac
 ```
@@ -393,7 +393,7 @@ brew install --cask opencode-desktop
 ## 6. 업데이트
 
 ```bash
-cd /Users/hsahn/Desktop/opencode
+cd ~/Desktop/opencode
 git status --short
 git pull
 bun install

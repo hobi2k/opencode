@@ -29,7 +29,7 @@ opencode /path/to/project
 
 모델이나 서버를 자주 바꿀 때 이 방식을 씁니다.
 
-`/Users/hsahn/Desktop/opencode/local/env.local`에 값을 넣습니다.
+`~/Desktop/opencode/local/env.local`에 값을 넣습니다.
 
 ```env
 LOCAL_BACKEND=lmstudio
@@ -38,7 +38,7 @@ LOCAL_MODEL_ID=서버에_보이는_모델_ID
 LOCAL_MODEL_NAME=서버에_보이는_모델_ID
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 `LOCAL_MODEL_ID`는 LM Studio, Ollama, llama.cpp, mlx-lm, vLLM 같은 서버의 `/v1/models`에 보이는 모델 ID입니다. 고정된 지원 모델 목록은 없습니다.
@@ -46,7 +46,7 @@ LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode
 처음 한 번만 alias를 등록합니다.
 
 ```bash
-echo "alias opencode='/Users/hsahn/Desktop/opencode/scripts/opencode-local'" >> ~/.zshrc
+echo 'alias opencode="$HOME/Desktop/opencode/scripts/opencode-local"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
@@ -66,7 +66,7 @@ opencode --print
 
 모델 하나로 고정해서 쓸 때 이 방식을 씁니다.
 
-`/Users/hsahn/Desktop/opencode/configs/opencode.local.jsonc`에서 아래 값을 직접 맞춥니다.
+`~/Desktop/opencode/configs/opencode.local.jsonc`에서 아래 값을 직접 맞춥니다.
 
 ```text
 baseURL
@@ -77,7 +77,7 @@ model
 처음 한 번만 환경변수를 등록합니다.
 
 ```bash
-echo 'export OPENCODE_CONFIG=/Users/hsahn/Desktop/opencode/configs/opencode.local.jsonc' >> ~/.zshrc
+echo 'export OPENCODE_CONFIG="$HOME/Desktop/opencode/configs/opencode.local.jsonc"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
@@ -125,7 +125,7 @@ LOCAL_MODEL_ID=LM_STUDIO_모델_ID
 LOCAL_MODEL_NAME=LM_STUDIO_모델_ID
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 터미널:
@@ -150,7 +150,7 @@ LOCAL_MODEL_ID=모델이름
 LOCAL_MODEL_NAME=모델이름
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 터미널:
@@ -180,7 +180,7 @@ LOCAL_MODEL_ID=my-model
 LOCAL_MODEL_NAME=my-model
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 `LOCAL_MODEL_ID`는 `llama-server --alias` 값과 맞춥니다.
@@ -226,13 +226,13 @@ LOCAL_MODEL_ID=서버에_보이는_모델_ID
 LOCAL_MODEL_NAME=서버에_보이는_모델_ID
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 모델 ID에 `/`가 있으면 alias proxy를 켭니다.
 
 ```bash
-cd /Users/hsahn/Desktop/opencode
+cd ~/Desktop/opencode
 MLX_PROXY_MODEL_ALIAS=my-model \
 MLX_PROXY_UPSTREAM_MODEL=mlx-community/모델이름 \
 MLX_PROXY_UPSTREAM=http://127.0.0.1:8080 \
@@ -249,7 +249,7 @@ LOCAL_MODEL_ID=my-model
 LOCAL_MODEL_NAME=my-model
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 터미널:
@@ -275,7 +275,7 @@ LOCAL_MODEL_ID=서버에_보이는_모델_ID
 LOCAL_MODEL_NAME=서버에_보이는_모델_ID
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 터미널:
@@ -305,7 +305,7 @@ LOCAL_MODEL_ID=my-model
 LOCAL_MODEL_NAME=my-model
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 `LOCAL_MODEL_ID`는 `--served-model-name` 값과 맞춥니다.
@@ -333,7 +333,7 @@ LOCAL_MODEL_ID=서버에_보이는_모델_ID
 LOCAL_MODEL_NAME=서버에_보이는_모델_ID
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 서버가 일반 OpenAI-compatible API만 제공한다면 `LOCAL_BACKEND=openai-compatible`로 써도 됩니다.
@@ -368,7 +368,7 @@ LOCAL_MODEL_ID=서버에_보이는_모델_ID
 LOCAL_MODEL_NAME=서버에_보이는_모델_ID
 LOCAL_API_KEY=local-dev-token
 LOCAL_OPENCODE_PROVIDER_ID=local
-LOCAL_OPENCODE_BIN=/Users/hsahn/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
+LOCAL_OPENCODE_BIN=
 ```
 
 터미널:
