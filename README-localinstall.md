@@ -367,16 +367,18 @@ LOCAL_OPENCODE_BIN=
 opencode
 ```
 
-## 5. Desktop app
+## 5. Desktop App (BETA)
 
-개발 모드:
+이 repo에서 데스크톱 앱을 실행하거나 직접 설치 파일을 만들 수 있습니다.
+
+개발 모드로 바로 실행:
 
 ```bash
 cd ~/Desktop/opencode
 bun dev:desktop
 ```
 
-패키징:
+macOS 앱을 직접 빌드:
 
 ```bash
 cd ~/Desktop/opencode
@@ -384,10 +386,39 @@ bun run --cwd packages/desktop build
 bun run --cwd packages/desktop package:mac
 ```
 
-공식 배포판:
+BETA 채널 이름으로 macOS 앱을 직접 빌드:
+
+```bash
+cd ~/Desktop/opencode
+OPENCODE_CHANNEL=beta bun run --cwd packages/desktop build
+OPENCODE_CHANNEL=beta bun run --cwd packages/desktop package:mac
+```
+
+패키징 결과물은 아래 폴더에 생깁니다.
+
+```text
+~/Desktop/opencode/packages/desktop/dist
+```
+
+Apple Silicon Mac에서는 보통 이런 파일이 생깁니다.
+
+```text
+opencode-desktop-mac-arm64.dmg
+```
+
+DMG를 열어서 Applications로 옮기면 설치됩니다.
+
+공식 배포판을 받을 때만 아래 방법을 씁니다.
 
 ```bash
 brew install --cask opencode-desktop
+```
+
+공식 다운로드 페이지:
+
+```text
+https://opencode.ai/download
+https://github.com/anomalyco/opencode/releases
 ```
 
 ## 6. 업데이트
