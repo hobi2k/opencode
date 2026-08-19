@@ -66,6 +66,11 @@
       "modelField": "opencodeModel",
       "note": "Start vMLX with an OpenAI-compatible endpoint and set LOCAL_MODEL_ID to the model id shown by /v1/models if needed."
     },
+    "omlx": {
+      "baseURL": "http://127.0.0.1:8001/v1",
+      "modelField": "opencodeModel",
+      "note": "Start omlx with an OpenAI-compatible endpoint and set LOCAL_MODEL_ID to the model id shown by /v1/models if needed."
+    },
     "vllm-metal": {
       "baseURL": "http://127.0.0.1:8000/v1",
       "modelField": "opencodeModel",

@@ -58,6 +58,10 @@ switch ($Backend) {
     if (-not $BaseUrl) { $BaseUrl = "http://127.0.0.1:8000/v1" }
     if (-not $Model) { $Model = $ProfileData.Alias }
   }
+  "omlx" {
+    if (-not $BaseUrl) { $BaseUrl = "http://127.0.0.1:8001/v1" }
+    if (-not $Model) { $Model = $ProfileData.Alias }
+  }
   { $_ -in @("vllm-metal", "vllmmetal") } {
     if (-not $BaseUrl) { $BaseUrl = "http://127.0.0.1:8000/v1" }
     if (-not $Model) { $Model = $ProfileData.Alias }

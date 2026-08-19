@@ -104,6 +104,7 @@ unalias opencode
 | `llamacpp` | `http://127.0.0.1:8080/v1` | llama.cpp `llama-server` |
 | `mlx-lm` | `http://127.0.0.1:8080/v1` | `mlx_lm.server` |
 | `vmlx` | `http://127.0.0.1:8000/v1` | vMLX 계열 OpenAI-compatible 서버 |
+| `omlx` | `http://127.0.0.1:8001/v1` | omlx 계열 OpenAI-compatible 서버 |
 | `vllm` | `http://127.0.0.1:8000/v1` | vLLM OpenAI server |
 | `vllm-metal` | `http://127.0.0.1:8000/v1` | Mac용 vLLM Metal 계열 |
 | `openai-compatible` | `http://127.0.0.1:8000/v1` | 직접 만든 OpenAI-compatible 서버 |
@@ -271,6 +272,32 @@ curl http://127.0.0.1:8000/v1/models
 ```env
 LOCAL_BACKEND=vmlx
 LOCAL_OPENAI_BASE_URL=http://127.0.0.1:8000/v1
+LOCAL_MODEL_ID=서버에_보이는_모델_ID
+LOCAL_MODEL_NAME=서버에_보이는_모델_ID
+LOCAL_API_KEY=local-dev-token
+LOCAL_OPENCODE_PROVIDER_ID=local
+LOCAL_OPENCODE_BIN=
+```
+
+터미널:
+
+```bash
+opencode
+```
+
+## omlx
+
+omlx에서 OpenAI-compatible server를 켠 뒤 모델 ID를 확인합니다.
+
+```bash
+curl http://127.0.0.1:8001/v1/models
+```
+
+`local/env.local`:
+
+```env
+LOCAL_BACKEND=omlx
+LOCAL_OPENAI_BASE_URL=http://127.0.0.1:8001/v1
 LOCAL_MODEL_ID=서버에_보이는_모델_ID
 LOCAL_MODEL_NAME=서버에_보이는_모델_ID
 LOCAL_API_KEY=local-dev-token

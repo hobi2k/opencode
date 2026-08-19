@@ -41,6 +41,10 @@ opencode_local_resolve_backend() {
       LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:8000/v1}
       LOCAL_RESOLVED_MODEL=$LOCAL_MODEL_ID
       ;;
+    omlx)
+      LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:8001/v1}
+      LOCAL_RESOLVED_MODEL=$LOCAL_MODEL_ID
+      ;;
     vllm-metal | vllmmetal)
       LOCAL_RESOLVED_BASE_URL=${LOCAL_OPENAI_BASE_URL:-http://127.0.0.1:8000/v1}
       LOCAL_RESOLVED_MODEL=$LOCAL_MODEL_ID
@@ -55,7 +59,7 @@ opencode_local_resolve_backend() {
       ;;
     *)
       printf 'Unknown LOCAL_BACKEND: %s\n' "$backend" >&2
-      printf 'Supported: ollama, llamacpp, vllm, mlx-lm, vmlx, vllm-metal, lmstudio, openai-compatible\n' >&2
+      printf 'Supported: ollama, llamacpp, vllm, mlx-lm, vmlx, omlx, vllm-metal, lmstudio, openai-compatible\n' >&2
       exit 2
       ;;
   esac
