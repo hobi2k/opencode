@@ -23,31 +23,9 @@ opencode /path/to/project
 
 두 방식은 동시에 켜지 않습니다. `local/env.local` 방식은 alias를 쓰고, `configs/opencode.local.jsonc` 방식은 `OPENCODE_CONFIG`를 씁니다.
 
-설정만 바꾸는 경우에는 다시 빌드하지 않습니다. opencode 소스를 `git pull`로 갱신했으면 다시 빌드합니다. 절차는 아래 [업데이트](#업데이트) 항목에 있습니다.
+설정만 바꾸면 빌드하지 않습니다. `git pull`로 소스를 갱신했으면 빌드까지 해야 합니다. 절차는 [업데이트](#업데이트)에 있습니다.
 
-`opencode`는 alias로 `scripts/opencode-local`을 타고, 그 스크립트가 빌드된 실행 파일을 찾아서 띄웁니다. 아래 경로를 자동으로 잡으니 `LOCAL_OPENCODE_BIN`은 비워둬도 됩니다.
-
-```text
-packages/opencode/dist/opencode-<os>-<arch>/bin/opencode
-```
-
-다른 실행 파일을 쓰고 싶을 때만 `local/env.local`에 직접 적습니다.
-
-```env
-LOCAL_OPENCODE_BIN=$HOME/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
-```
-
-지금 무엇을 띄우는지는 `--print`로 확인합니다.
-
-```bash
-opencode --print
-```
-
-```text
-bin=/Users/사용자/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
-```
-
-`bin=<source>`로 나오면 빌드된 실행 파일이 없어서 소스로 떨어진 상태입니다. 그때는 세션이 `opencode-local.db`로 가고 프로젝트가 opencode repo로 고정되니, 빌드부터 합니다.
+`opencode` alias는 `scripts/opencode-local`을 타고, 그 스크립트가 `packages/opencode/dist` 밑의 빌드된 실행 파일을 자동으로 찾습니다. 그래서 `local/env.local`의 `LOCAL_OPENCODE_BIN`은 비워둡니다.
 
 ## 방식 A: local/env.local
 
@@ -417,23 +395,9 @@ LOCAL_OPENCODE_PROVIDER_ID=local
 opencode
 ```
 
-## 빌드
-
-아래만 바꾸면 다시 빌드하지 않습니다.
-
-```text
-local/env.local
-LOCAL_BACKEND
-LOCAL_OPENAI_BASE_URL
-LOCAL_MODEL_ID
-configs/opencode.local.jsonc
-```
-
-opencode 본체 코드를 수정했거나 `git pull`로 소스를 갱신했으면 다시 빌드합니다.
-
 ## 업데이트
 
-`git pull` 뒤에는 아래 네 줄을 한 묶음으로 실행합니다. 빌드까지가 한 세트입니다.
+`git pull` 하면 빌드까지가 한 세트입니다. pull은 소스만 갱신하고 `dist/`의 실행 파일은 예전 것이 그대로 남습니다.
 
 ```bash
 cd ~/Desktop/opencode
@@ -442,54 +406,60 @@ bun install
 bun run --cwd packages/opencode build --single
 ```
 
-빌드 끝에 스모크 테스트가 새 버전을 찍습니다. 이 줄이 나오면 실행 파일이 갱신된 것입니다.
-
-```text
-building opencode-darwin-arm64
-Running smoke test: dist/opencode-darwin-arm64/bin/opencode --version
-Smoke test passed: 0.0.0-dev-202608190116
-```
-
-`git pull`만 하고 빌드를 빼면 소스는 최신인데 실행 파일은 예전 것이 그대로 남습니다. 실행 파일 시각이 마지막 커밋 시각보다 앞서면 빌드가 안 된 상태입니다.
+데스크톱 앱도 쓰면 이어서 실행합니다.
 
 ```bash
-ls -la packages/opencode/dist/opencode-darwin-arm64/bin/opencode
-git log -1 --format='%ad' --date=iso
+bun run --cwd packages/desktop build
+bun run --cwd packages/desktop package:mac
 ```
 
-버전 문자열로도 확인합니다.
+`packages/desktop/dist`에 생긴 dmg를 열어 Applications로 옮깁니다.
+
+확인은 이 한 줄입니다.
 
 ```bash
 opencode --version
 ```
 
 ```text
-0.0.0-dev-202608190116   직접 빌드한 실행 파일
-1.18.15                  brew 등으로 설치한 공식 릴리즈
-local                    빌드 없이 소스로 실행된 상태
+0.0.0-dev-202608191126     정상
 ```
 
-`0.0.0-dev-`로 시작하지 않으면 의도한 실행 파일이 아닙니다. 아래 순서로 잡습니다.
+`OPENCODE_CHANNEL`은 붙이지 않습니다. 채널이 세션 DB 파일명을 정하기 때문에, 붙여서 빌드하면 기록이 다른 파일로 갈립니다.
+
+아래만 바꿀 때는 빌드하지 않습니다.
 
 ```text
-1. opencode --print 의 bin= 줄이 dist 실행 파일을 가리키는지 본다
-2. which -a opencode 로 다른 설치본이 앞을 막는지 본다
-3. 다시 빌드한다
+local/env.local
+configs/opencode.local.jsonc
 ```
 
-## 브랜치를 바꿀 때
+## 세션이 안 보일 때
 
-세션 기록은 `~/.local/share/opencode/` 밑 SQLite 파일에 들어가고, 파일 이름이 빌드 시점의 git 브랜치를 따릅니다. `dev`에서 빌드하면 `opencode-dev.db`입니다. 다른 브랜치에서 빌드하면 기록이 다른 파일로 갈립니다.
+실행 파일이 바뀌면 세션 DB도 같이 바뀝니다. 세 줄로 확인합니다.
 
-브랜치와 무관하게 한 파일을 쓰려면 `local/env.local`에 `export`로 고정합니다.
-
-```env
-export OPENCODE_DB=opencode-dev.db
+```bash
+opencode --version    # 0.0.0-dev-... 가 아니면 다른 실행 파일이다
+opencode --print      # bin= 줄이 dist 실행 파일을 가리키는지
+which -a opencode     # 다른 설치본이 PATH 앞을 막는지
 ```
 
-`local/env.local`은 `.` (source)로 읽히므로 opencode 본체에 넘길 값은 `export`를 붙입니다. `LOCAL_*`는 스크립트가 직접 쓰니 `export` 없이도 됩니다.
+DB는 채널로 갈립니다.
 
-현재 어떤 파일에 세션이 쌓여 있는지 확인:
+| 실행 | 채널 | 세션 DB |
+| --- | --- | --- |
+| 리포에서 빌드한 CLI | `dev` | `opencode-dev.db` |
+| 리포에서 빌드한 데스크톱 앱 | `dev` | `opencode-dev.db` |
+| 공식 릴리즈 (brew, 다운로드) | `latest` / `prod` | `opencode.db` |
+| 빌드 없이 소스 실행 | `local` | `opencode-local.db` |
+
+리포에서 빌드한 CLI와 데스크톱 앱은 같은 `opencode-dev.db`를 씁니다. 공식 릴리즈를 섞어 쓰면 기록이 안 보이므로 설치하지 않습니다.
+
+```bash
+brew uninstall opencode
+```
+
+세션 수를 직접 셀 수 있습니다.
 
 ```bash
 for f in ~/.local/share/opencode/opencode*.db; do
@@ -500,15 +470,29 @@ done
 
 ## 슬래시 커맨드
 
-세션 밖(홈 화면)과 세션 안에서 쓸 수 있는 커맨드가 다릅니다.
+세션 밖과 세션 안에서 쓸 수 있는 커맨드가 다릅니다.
 
 | 어디서 | 커맨드 |
 | --- | --- |
-| 홈 화면 포함 어디서나 | `/sessions` `/new` `/models` `/agents` `/mcps` `/skills` `/variants` `/themes` `/status` `/help` `/exit` `/connect` `/workspaces` `/editor` `/warp` `/move` `/debug` |
-| 세션 안에서만 | `/rename` `/share` `/unshare` `/compact` `/fork` `/timeline` `/undo` `/redo` `/copy` `/export` `/timestamps` `/thinking` |
+| 홈 화면 포함 어디서나 | `/sessions` `/new` `/models` `/agents` `/mcps` `/skills` `/variants` `/themes` `/status` `/help` `/exit` |
+| 세션 안에서만 | `/rename` `/share` `/compact` `/fork` `/timeline` `/undo` `/redo` `/copy` `/export` |
 
-홈 화면에서 `/rename`이 안 보이는 것은 정상입니다. `/sessions`로 기존 세션을 열거나 `/new`로 새 세션을 시작한 뒤에 씁니다. 세션 이름 바꾸기는 `ctrl+r`로도 됩니다.
+홈 화면에서 `/rename`이 안 보이는 것은 정상입니다. `/sessions`로 기존 세션을 열거나 `/new`로 시작한 뒤에 씁니다.
+
+## 프로젝트 폴더 이름을 바꿨을 때
+
+opencode는 프로젝트의 `worktree` 경로를 처음 한 번만 기록하고 이후 갱신하지 않습니다. 폴더 이름을 바꾸면 `/sessions`가 빈 목록으로 보입니다. DB를 직접 고칩니다.
 
 ```bash
-opencode --continue
+sqlite3 ~/.local/share/opencode/opencode-dev.db \
+  "select id, worktree from project;"
+```
+
+없는 경로가 보이면 그 행을 새 경로로 바꿉니다. opencode를 모두 종료한 뒤 실행합니다.
+
+```bash
+sqlite3 ~/.local/share/opencode/opencode-dev.db "
+UPDATE project SET worktree='/새/경로', sandboxes='[]' WHERE id='해당ID';
+UPDATE session SET directory='/새/경로' WHERE project_id='해당ID' AND directory='/옛/경로';
+"
 ```

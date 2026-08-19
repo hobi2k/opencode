@@ -72,20 +72,14 @@ opencode /path/to/project
 
 빌드란 원본 코드를 수정하는 것이 아니라 실행 파일을 새로 만드는 작업입니다. 같은 위치의 실행 파일을 갱신하므로 빌드할 때마다 PATH를 다시 잡을 필요는 없습니다.
 
-연결이 됐는지 확인합니다.
+연결됐는지 확인합니다.
 
 ```bash
 which -a opencode
 opencode --version
 ```
 
-```text
-0.0.0-dev-202608190116   직접 빌드한 실행 파일
-1.18.15                  brew 등으로 설치한 공식 릴리즈
-local                    빌드 없이 소스로 실행된 상태
-```
-
-`brew install opencode`로 받은 `/opt/homebrew/bin/opencode`는 보통 `~/.local/bin`보다 PATH 앞입니다. 직접 빌드한 것만 쓸 거라면 지웁니다. 공식 릴리즈와 직접 빌드는 세션 기록 파일이 서로 다르므로 번갈아 쓰지 않습니다.
+`0.0.0-dev-<빌드시각>`이 나와야 합니다. 공식 릴리즈를 같이 깔면 PATH 앞을 막아 세션 기록이 갈리므로 설치하지 않습니다.
 
 ```bash
 brew uninstall opencode
@@ -136,25 +130,9 @@ opencode --print
 
 `LOCAL_MODEL_ID`는 서버의 `/v1/models`에 보이는 모델 ID입니다. 고정된 지원 모델 목록은 없습니다.
 
-`LOCAL_OPENCODE_BIN`은 비워둬도 됩니다. `scripts/opencode-local`이 2단계에서 빌드한 실행 파일을 자동으로 찾습니다.
+`LOCAL_OPENCODE_BIN`은 비워둡니다. `scripts/opencode-local`이 2단계에서 빌드한 실행 파일을 자동으로 찾습니다. 무엇을 띄우는지는 `opencode --print`의 `bin=` 줄로 확인합니다.
 
-```text
-packages/opencode/dist/opencode-<os>-<arch>/bin/opencode
-```
-
-무엇을 띄우는지 확인합니다.
-
-```bash
-opencode --print
-```
-
-```text
-bin=/Users/사용자/Desktop/opencode/packages/opencode/dist/opencode-darwin-arm64/bin/opencode
-```
-
-`bin=<source>`면 빌드된 실행 파일이 없어서 소스로 떨어진 상태입니다. 그러면 세션 기록 파일이 갈리고 프로젝트가 opencode repo로 고정되니, 2단계 빌드를 먼저 합니다.
-
-작업 폴더에서 제대로 붙었는지 확인합니다.
+작업 폴더에서 확인합니다.
 
 ```bash
 cd /원하는/작업/폴더
@@ -402,9 +380,9 @@ LOCAL_OPENCODE_PROVIDER_ID=local
 opencode
 ```
 
-## 5. Desktop App (BETA)
+## 5. Desktop App
 
-이 repo에서 데스크톱 앱을 실행하거나 직접 설치 파일을 만들 수 있습니다.
+이 리포에서 데스크톱 앱을 빌드해서 씁니다. 리포 빌드는 CLI와 같은 `dev` 채널이라 **세션 기록을 CLI와 공유**합니다.
 
 개발 모드로 바로 실행:
 
@@ -413,7 +391,7 @@ cd ~/Desktop/opencode
 bun dev:desktop
 ```
 
-macOS 앱을 직접 빌드:
+설치용 앱 빌드:
 
 ```bash
 cd ~/Desktop/opencode
@@ -421,44 +399,35 @@ bun run --cwd packages/desktop build
 bun run --cwd packages/desktop package:mac
 ```
 
-BETA 채널 이름으로 macOS 앱을 직접 빌드:
+결과물은 아래에 생깁니다. dmg를 열어 Applications로 옮기면 설치됩니다.
+
+```text
+~/Desktop/opencode/packages/desktop/dist/opencode-desktop-mac-arm64.dmg
+```
+
+앱 이름은 `OpenCode Dev`입니다. 공식 배포판(`OpenCode`)과 다른 번들이라 섞이지 않습니다.
+
+직접 빌드한 앱은 서명이 없어서 처음 열 때 macOS가 막습니다. 한 번만 격리 속성을 지웁니다.
 
 ```bash
-cd ~/Desktop/opencode
-OPENCODE_CHANNEL=beta bun run --cwd packages/desktop build
-OPENCODE_CHANNEL=beta bun run --cwd packages/desktop package:mac
+xattr -dr com.apple.quarantine "/Applications/OpenCode Dev.app"
 ```
 
-패키징 결과물은 아래 폴더에 생깁니다.
-
-```text
-~/Desktop/opencode/packages/desktop/dist
-```
-
-Apple Silicon Mac에서는 보통 이런 파일이 생깁니다.
-
-```text
-opencode-desktop-mac-arm64.dmg
-```
-
-DMG를 열어서 Applications로 옮기면 설치됩니다.
-
-공식 배포판을 받을 때만 아래 방법을 씁니다.
+`OPENCODE_CHANNEL`은 붙이지 않습니다. `beta`나 `prod`로 빌드하면 세션 DB가 `opencode.db`로 갈려서 CLI 기록이 보이지 않습니다.
 
 ```bash
-brew install --cask opencode-desktop
+OPENCODE_CHANNEL=beta ...    # 쓰지 않는다
 ```
 
-공식 다운로드 페이지:
+공식 배포판도 같은 이유로 쓰지 않습니다. 서명된 릴리즈는 `prod` 채널로 고정되어 `opencode.db`를 봅니다.
 
-```text
-https://opencode.ai/download
-https://github.com/anomalyco/opencode/releases
+```bash
+brew install --cask opencode-desktop    # 쓰지 않는다
 ```
 
-## 6. 업데이트 (git pull 후 최신화)
+## 6. 업데이트 (git pull 후)
 
-`git pull`은 소스만 갱신합니다. `dist/`의 실행 파일은 그대로 남으므로 빌드까지 해야 최신화가 끝납니다. 아래를 한 묶음으로 실행합니다.
+pull은 소스만 갱신합니다. `dist/`의 실행 파일은 예전 것이 그대로 남으므로 빌드까지가 한 세트입니다.
 
 ```bash
 cd ~/Desktop/opencode
@@ -468,55 +437,47 @@ bun install
 bun run --cwd packages/opencode build --single
 ```
 
-`git status --short`에 내가 고친 파일이 남아 있으면 pull 전에 정리합니다. `local/env.local`은 git이 추적하지 않으므로 pull에 영향받지 않습니다.
+데스크톱 앱도 쓰면 이어서 실행합니다.
 
-빌드 끝에 스모크 테스트가 새 버전을 찍습니다. 이 줄이 나오면 실행 파일이 갱신된 것입니다.
-
-```text
-building opencode-darwin-arm64
-Running smoke test: dist/opencode-darwin-arm64/bin/opencode --version
-Smoke test passed: 0.0.0-dev-202608190116
+```bash
+bun run --cwd packages/desktop build
+bun run --cwd packages/desktop package:mac
 ```
 
-마무리 확인 세 줄입니다.
+확인은 이 한 줄입니다.
 
 ```bash
 opencode --version
-which -a opencode
-ls -la packages/opencode/dist/opencode-darwin-arm64/bin/opencode
 ```
-
-확인 기준:
 
 ```text
-opencode --version 이 0.0.0-dev-<빌드시각> 인지
-which -a opencode 첫 줄이 alias 또는 ~/.local/bin/opencode 인지
-dist 실행 파일 시각이 마지막 커밋 시각보다 뒤인지
+0.0.0-dev-202608191126     정상
 ```
 
-마지막 커밋 시각은 이렇게 봅니다.
+`OPENCODE_CHANNEL`은 붙이지 않습니다. 채널이 세션 DB 파일명을 정합니다.
+
+`local/env.local`이나 `configs/opencode.local.jsonc`만 바꿀 때는 빌드하지 않습니다.
+
+## 7. 세션이 안 보일 때
+
+실행 파일이 바뀌면 세션 DB도 같이 바뀝니다.
+
+| 실행 | 채널 | 세션 DB |
+| --- | --- | --- |
+| 리포에서 빌드한 CLI | `dev` | `opencode-dev.db` |
+| 리포에서 빌드한 데스크톱 앱 | `dev` | `opencode-dev.db` |
+| 공식 릴리즈 (brew, 다운로드) | `latest` / `prod` | `opencode.db` |
+| 빌드 없이 소스 실행 | `local` | `opencode-local.db` |
+
+세 줄로 확인합니다.
 
 ```bash
-git log -1 --format='%ad' --date=iso
+opencode --version    # 0.0.0-dev-... 가 아니면 다른 실행 파일이다
+opencode --print      # bin= 줄이 dist 실행 파일을 가리키는지
+which -a opencode     # 다른 설치본이 PATH 앞을 막는지
 ```
 
-`local/env.local`이나 `configs/opencode.local.jsonc`만 바꾸는 경우에는 다시 빌드하지 않습니다.
-
-### 세션 기록 위치
-
-세션은 `~/.local/share/opencode/` 밑 SQLite 파일에 들어가고, 파일 이름이 빌드 시점의 git 브랜치를 따릅니다. `dev`에서 빌드하면 `opencode-dev.db`입니다. 공식 릴리즈는 `opencode.db`, 빌드 없이 소스로 실행하면 `opencode-local.db`를 씁니다.
-
-그래서 실행 경로를 바꾸면 세션 목록이 비어 보입니다. 실행 경로를 하나로 유지하는 것이 원칙입니다.
-
-브랜치를 바꿔도 한 파일을 쓰려면 `local/env.local`에 `export`로 고정합니다.
-
-```env
-export OPENCODE_DB=opencode-dev.db
-```
-
-`local/env.local`은 `.` (source)로 읽히므로 opencode 본체에 넘길 값은 `export`를 붙입니다. `LOCAL_*`는 스크립트가 직접 쓰니 `export` 없이도 됩니다.
-
-어느 파일에 세션이 쌓여 있는지 확인:
+DB별 세션 수:
 
 ```bash
 for f in ~/.local/share/opencode/opencode*.db; do
@@ -525,17 +486,4 @@ for f in ~/.local/share/opencode/opencode*.db; do
 done
 ```
 
-### 슬래시 커맨드
-
-업데이트 뒤에 `/rename`이 안 보이면 세션 밖(홈 화면)일 가능성이 큽니다. 커맨드 범위가 둘로 나뉩니다.
-
-| 어디서 | 커맨드 |
-| --- | --- |
-| 홈 화면 포함 어디서나 | `/sessions` `/new` `/models` `/agents` `/mcps` `/skills` `/variants` `/themes` `/status` `/help` `/exit` `/connect` `/workspaces` `/editor` `/warp` `/move` `/debug` |
-| 세션 안에서만 | `/rename` `/share` `/unshare` `/compact` `/fork` `/timeline` `/undo` `/redo` `/copy` `/export` `/timestamps` `/thinking` |
-
-`/sessions`로 기존 세션을 열거나 `/new`로 시작한 뒤에 씁니다. 세션 이름 바꾸기는 `ctrl+r`로도 됩니다.
-
-```bash
-opencode --continue
-```
+`/rename`이 안 보이면 세션 밖(홈 화면)입니다. 세션 커맨드는 세션 안에서만 등록됩니다. `/sessions`로 세션을 열고 쓰면 됩니다. 자세한 내용은 [README-local.md](README-local.md)에 있습니다.
