@@ -21,6 +21,30 @@ function Resolve-LocalProfile {
   }
 }
 
+function Resolve-LocalOpenCodeBin {
+  param([string]$Root)
+
+  if ($env:LOCAL_OPENCODE_BIN) { return $env:LOCAL_OPENCODE_BIN }
+
+  # Prefer the dist binary. Running from source instead would pin the channel to
+  # "local" (separate session db) and force the project to the repo root,
+  # because `bun run --cwd` replaces process.cwd().
+  $Dist = Join-Path $Root "packages/opencode/dist"
+  if (-not (Test-Path $Dist)) { return $null }
+
+  $Arch = if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") { "arm64" } else { "x64" }
+  $Preferred = Join-Path $Dist "opencode-windows-$Arch/bin/opencode.exe"
+  if (Test-Path $Preferred) { return $Preferred }
+
+  $Found = Get-ChildItem -Path $Dist -Filter "opencode-*" -Directory -ErrorAction SilentlyContinue |
+    ForEach-Object { Join-Path $_.FullName "bin/opencode.exe" } |
+    Where-Object { Test-Path $_ } |
+    Select-Object -First 1
+  if ($Found) { return $Found }
+
+  return $null
+}
+
 $LocalEnv = Join-Path $Root "local/env.local"
 if (Test-Path $LocalEnv) {
   Get-Content $LocalEnv | ForEach-Object {
@@ -100,6 +124,8 @@ $Config = @{
 }
 $ConfigJson = $Config | ConvertTo-Json -Depth 10
 
+$OpenCodeBin = Resolve-LocalOpenCodeBin -Root $Root
+
 if ($Print) {
   "profile=$Profile"
   "name=$($ProfileData.Display)"
@@ -108,19 +134,23 @@ if ($Print) {
   "model=$Model"
   "provider=$ProviderId"
   "opencode_selector=$ProviderId/$Model"
+  "bin=$(if ($OpenCodeBin) { $OpenCodeBin } else { '<source>' })"
   $ConfigJson
   exit 0
 }
 
 $env:OPENCODE_CONFIG_CONTENT = $ConfigJson
 
-if ($env:LOCAL_OPENCODE_BIN) {
-  & $env:LOCAL_OPENCODE_BIN @OpenCodeArgs
+if ($OpenCodeBin) {
+  & $OpenCodeBin @OpenCodeArgs
   exit $LASTEXITCODE
 }
 
 $SourceCli = Join-Path $Root "packages/opencode/src/index.ts"
 if ((Test-Path $SourceCli) -and (Get-Command bun -ErrorAction SilentlyContinue)) {
+  Write-Warning "opencode-local: no built binary under packages/opencode/dist, running from source."
+  Write-Warning "opencode-local: sessions go to opencode-local.db and the project is pinned to $Root."
+  Write-Warning "opencode-local: build it with  bun run --cwd $Root/packages/opencode build --single"
   & bun run --cwd (Join-Path $Root "packages/opencode") --conditions=browser ./src/index.ts @OpenCodeArgs
   exit $LASTEXITCODE
 }

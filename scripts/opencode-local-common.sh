@@ -67,6 +67,49 @@ opencode_local_resolve_backend() {
   LOCAL_RESOLVED_API_KEY=${LOCAL_API_KEY:-local-dev-token}
 }
 
+opencode_local_resolve_bin() {
+  root=$1
+
+  if [ -n "${LOCAL_OPENCODE_BIN:-}" ]; then
+    LOCAL_RESOLVED_BIN=$LOCAL_OPENCODE_BIN
+    return 0
+  fi
+
+  # Prefer the dist binary for this platform. Running from source instead would
+  # pin the channel to "local" (separate session db) and force the project to
+  # the repo root, because `bun run --cwd` replaces process.cwd().
+  bin_os=$(uname -s 2>/dev/null || printf '')
+  bin_arch=$(uname -m 2>/dev/null || printf '')
+  case "$bin_os" in
+    Darwin) bin_os=darwin ;;
+    Linux) bin_os=linux ;;
+    *) bin_os= ;;
+  esac
+  case "$bin_arch" in
+    arm64 | aarch64) bin_arch=arm64 ;;
+    x86_64 | amd64) bin_arch=x64 ;;
+    *) bin_arch= ;;
+  esac
+
+  if [ -n "$bin_os" ] && [ -n "$bin_arch" ]; then
+    candidate="$root/packages/opencode/dist/opencode-$bin_os-$bin_arch/bin/opencode"
+    if [ -x "$candidate" ]; then
+      LOCAL_RESOLVED_BIN=$candidate
+      return 0
+    fi
+  fi
+
+  for candidate in "$root"/packages/opencode/dist/opencode-*/bin/opencode; do
+    if [ -x "$candidate" ]; then
+      LOCAL_RESOLVED_BIN=$candidate
+      return 0
+    fi
+  done
+
+  LOCAL_RESOLVED_BIN=
+  return 0
+}
+
 opencode_local_json_escape() {
   printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
 }
@@ -77,4 +120,5 @@ opencode_local_print() {
   printf 'backend=%s\n' "$LOCAL_RESOLVED_BACKEND"
   printf 'base_url=%s\n' "$LOCAL_RESOLVED_BASE_URL"
   printf 'model=%s\n' "$LOCAL_RESOLVED_MODEL"
+  printf 'bin=%s\n' "${LOCAL_RESOLVED_BIN:-<source>}"
 }

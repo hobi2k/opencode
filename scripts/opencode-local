@@ -39,6 +39,8 @@ OPENCODE_CONFIG_CONTENT=$(cat <<EOF
 EOF
 )
 
+opencode_local_resolve_bin "$ROOT"
+
 if [ "${1:-}" = "--print" ]; then
   opencode_local_print
   printf 'provider=%s\n' "$PROVIDER_ID"
@@ -49,11 +51,14 @@ fi
 
 export OPENCODE_CONFIG_CONTENT
 
-if [ -n "${LOCAL_OPENCODE_BIN:-}" ]; then
-  exec "$LOCAL_OPENCODE_BIN" "$@"
+if [ -n "${LOCAL_RESOLVED_BIN:-}" ]; then
+  exec "$LOCAL_RESOLVED_BIN" "$@"
 fi
 
 if [ -f "$ROOT/packages/opencode/src/index.ts" ] && command -v bun >/dev/null 2>&1; then
+  printf 'opencode-local: no built binary under packages/opencode/dist, running from source.\n' >&2
+  printf 'opencode-local: sessions go to opencode-local.db and the project is pinned to %s.\n' "$ROOT" >&2
+  printf 'opencode-local: build it with  bun run --cwd %s/packages/opencode build --single\n' "$ROOT" >&2
   exec bun run --cwd "$ROOT/packages/opencode" --conditions=browser ./src/index.ts "$@"
 fi
 
